@@ -288,34 +288,3 @@ class MeuServidor(http.server.SimpleHTTPRequestHandler):
 print(f"MEGA WIFI 5G rodando na porta {PORT}")
 with socketserver.TCPServer(("0.0.0.0", PORT), MeuServidor) as httpd:
     httpd.serve_forever()
-
-<script>
-function irTela2(){
-document.getElementById("tela1").style.display="none";
-document.getElementById("tela2").style.display="block";
-document.getElementById("resultado").innerText="✅ Botão funcionou!";
-}
-
-function irTela1(){
-document.getElementById("tela2").style.display="none";
-document.getElementById("tela1").style.display="block";
-}
-
-function mostrarAlerta(){
-alert("✅ BOTÃO FUNCIONANDO!");
-document.getElementById("resultado").innerText="✅ Alerta mostrado!";
-}
-</script>
-</body>
-</html>"""
-
-class MeuServidor(http.server.SimpleHTTPRequestHandler):
-    def do_GET(self):
-        self.send_response(200)
-        self.send_header("Content-type", "text/html; charset=utf-8")
-        self.end_headers()
-        self.wfile.write(HTML.encode("utf-8"))
-
-print(f"TESTE rodando na porta {PORT}")
-with socketserver.TCPServer(("0.0.0.0", PORT), MeuServidor) as httpd:
-    httpd.serve_forever()
