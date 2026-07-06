@@ -14,8 +14,9 @@ HTML = """<!DOCTYPE html>
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:#0a0a1a;color:#fff;font-family:Arial;text-align:center;padding:15px;}
 h1{font-size:1.8em;color:#ff8800;}
+h2{font-size:1.2em;color:#ff8800;margin:10px 0;}
 .sub{font-size:.8em;color:#ff8800;margin-bottom:10px;}
-input{display:block;width:100%;padding:12px;margin:6px 0;border:none;border-radius:8px;font-size:1em;background:#111133;color:#fff;border:1px solid #ff8800;}
+input,select{display:block;width:100%;padding:12px;margin:6px 0;border:none;border-radius:8px;font-size:1em;background:#111133;color:#fff;border:1px solid #ff8800;}
 button{display:block;width:100%;padding:14px;margin:6px 0;border:none;border-radius:8px;font-size:1em;font-weight:bold;color:#fff;cursor:pointer;}
 .btn-l{background:#ff8800;}
 .btn-v{background:#00aa00;}
@@ -28,25 +29,56 @@ button{display:block;width:100%;padding:14px;margin:6px 0;border:none;border-rad
 .vel{font-size:2em;font-weight:bold;color:#ff8800;margin:8px 0;}
 .log{background:#111133;padding:8px;border-radius:8px;margin-top:10px;font-size:.75em;color:#00ff88;}
 .erro{color:#ff4444;font-size:.85em;}
+.sucesso{color:#00ff88;font-size:.85em;}
+.lista{background:#111133;padding:10px;border-radius:8px;margin:8px 0;font-size:.8em;text-align:left;color:#ccc;max-height:150px;overflow-y:auto;}
 </style>
 </head>
 <body>
+
+<!-- ========== TELA LOGIN ========== -->
 <div id="login">
 <h1>⚡ MEGA WIFI</h1>
 <p class="sub">5G ULTRA | NUVEM 24H</p>
-<input type="email" id="email" placeholder="Email">
-<input type="password" id="senha" placeholder="Senha">
+<input type="email" id="email" placeholder="📧 Email">
+<input type="password" id="senha" placeholder="🔑 Senha">
 <p class="erro" id="msg"></p>
 <button class="btn-l" onclick="logar()">⚡ ENTRAR</button>
-<button class="btn-c" onclick="admin()">🕵️ ADMIN</button>
+<button class="btn-c" onclick="mostrarAdminLogin()">🕵️ ADMIN</button>
 </div>
-<div id="ad" style="display:none;">
-<h1>🕵️ ADMIN</h1>
-<input type="password" id="sa" placeholder="Senha Master">
+
+<!-- ========== TELA LOGIN ADMIN ========== -->
+<div id="adminLogin" style="display:none;">
+<h1>🕵️ PAINEL ADMIN</h1>
+<p class="sub" style="color:#aaa;">ACESSO RESTRITO - KAUAN</p>
+<input type="password" id="sa" placeholder="🔐 Senha Master">
 <p class="erro" id="ma"></p>
-<button class="btn-l" onclick="va()">🔐 ACESSAR</button>
-<button class="btn-c" onclick="vl()">⬅ VOLTAR</button>
+<button class="btn-l" onclick="entrarAdmin()">🔐 ACESSAR PAINEL</button>
+<button class="btn-c" onclick="voltarLogin()">⬅ VOLTAR</button>
 </div>
+
+<!-- ========== PAINEL ADMIN ========== -->
+<div id="painelAdmin" style="display:none;">
+<h1>🕵️ GERENCIAR CLIENTES</h1>
+<p class="sub" style="color:#00ff88;">Adicione e visualize seus clientes</p>
+
+<div class="lista" id="listaClientes">Carregando...</div>
+
+<h2>➕ ADICIONAR NOVO CLIENTE</h2>
+<input type="text" id="novoNome" placeholder="👤 Nome do cliente">
+<input type="email" id="novoEmail" placeholder="📧 Email do cliente">
+<input type="password" id="novaSenha" placeholder="🔑 Senha para o cliente">
+<select id="novoPlano">
+<option value="BASICO">💰 BASICO - R$ 15/mes</option>
+<option value="PREMIUM">👑 PREMIUM - R$ 30/mes</option>
+</select>
+<p class="sucesso" id="msgAdd"></p>
+<p class="erro" id="msgErroAdd"></p>
+<button class="btn-v" onclick="adicionarCliente()">✅ ADICIONAR CLIENTE</button>
+<button class="btn-l" onclick="irParaAppAdmin()">📱 ABRIR MEGA WIFI 5G</button>
+<button class="btn-c" onclick="voltarLogin()">⬅ SAIR</button>
+</div>
+
+<!-- ========== TELA APP ========== -->
 <div id="app" style="display:none;">
 <h1>⚡ MEGA WIFI 5G</h1>
 <p class="sub" id="ui" style="color:#00ff88;"></p>
@@ -70,21 +102,97 @@ button{display:block;width:100%;padding:14px;margin:6px 0;border:none;border-rad
 </div>
 <p style="color:#aaa;font-size:.7em;margin-top:15px;">☁️ NUVEM 24H</p>
 </div>
+
 <script>
-var cl={"kauan@megawifi.com":{s:"kauan123",n:"Kauan",p:"PREMIUM"},"cliente1@megawifi.com":{s:"cliente123",n:"Cliente 1",p:"BASICO"}};
-var AD="kauanadmin123";
+// BANCO DE CLIENTES
+var cl={
+"kauan@megawifi.com":{s:"kauan123",n:"Kauan",p:"PREMIUM"},
+"cliente1@megawifi.com":{s:"cliente123",n:"Cliente 1",p:"BASICO"}
+};
+var ADMIN="kauanadmin123";
 var v=Math.floor(Math.random()*200)+200;
 var d=0;
+
+function atualizarLista(){
+var lista=document.getElementById("listaClientes");
+var txt="📋 CLIENTES:\\n\\n";
+for(var e in cl){
+txt+="✅ "+cl[e].n+"\\n   📧 "+e+"\\n   💰 "+cl[e].p+"\\n\\n";
+}
+lista.innerText=txt;
+}
+
+function adicionarCliente(){
+var nome=document.getElementById("novoNome").value.trim();
+var email=document.getElementById("novoEmail").value.trim().toLowerCase();
+var senha=document.getElementById("novaSenha").value.trim();
+var plano=document.getElementById("novoPlano").value;
+if(nome&&email&&senha){
+if(cl[email]){
+document.getElementById("msgErroAdd").innerText="❌ Email ja cadastrado!";
+document.getElementById("msgAdd").innerText="";
+}else{
+cl[email]={s:senha,n:nome,p:plano};
+document.getElementById("msgAdd").innerText="✅ "+nome+" adicionado!";
+document.getElementById("msgErroAdd").innerText="";
+document.getElementById("novoNome").value="";
+document.getElementById("novoEmail").value="";
+document.getElementById("novaSenha").value="";
+atualizarLista();
+}
+}else{
+document.getElementById("msgErroAdd").innerText="❌ Preencha todos os campos!";
+document.getElementById("msgAdd").innerText="";
+}
+}
+
+function mostrarAdminLogin(){
+document.getElementById("login").style.display="none";
+document.getElementById("adminLogin").style.display="block";
+}
+
+function voltarLogin(){
+document.getElementById("login").style.display="block";
+document.getElementById("adminLogin").style.display="none";
+document.getElementById("painelAdmin").style.display="none";
+}
+
+function entrarAdmin(){
+if(document.getElementById("sa").value==ADMIN){
+document.getElementById("adminLogin").style.display="none";
+document.getElementById("painelAdmin").style.display="block";
+atualizarLista();
+}else{
+document.getElementById("ma").innerText="❌ Senha master incorreta!";
+}
+}
+
+function irParaAppAdmin(){
+document.getElementById("painelAdmin").style.display="none";
+document.getElementById("app").style.display="block";
+document.getElementById("ui").innerText="🕵️ ADMIN: Kauan";
+}
+
 function logar(){
 var e=document.getElementById("email").value.trim().toLowerCase();
 var s=document.getElementById("senha").value.trim();
-if(cl[e]&&cl[e].s==s){document.getElementById("login").style.display="none";document.getElementById("app").style.display="block";document.getElementById("ui").innerText="👤 "+cl[e].n+" | "+cl[e].p;d=0;document.getElementById("vl").innerText=v;}
-else{document.getElementById("msg").innerText="❌ Email ou senha incorretos!";}
+if(cl[e]&&cl[e].s==s){
+document.getElementById("login").style.display="none";
+document.getElementById("app").style.display="block";
+document.getElementById("ui").innerText="👤 "+cl[e].n+" | 💰 "+cl[e].p;
+d=0;document.getElementById("vl").innerText=v;
+}else{document.getElementById("msg").innerText="❌ Email ou senha incorretos!";}
 }
-function admin(){document.getElementById("login").style.display="none";document.getElementById("ad").style.display="block";}
-function vl(){document.getElementById("ad").style.display="none";document.getElementById("login").style.display="block";}
-function va(){if(document.getElementById("sa").value==AD){document.getElementById("ad").style.display="none";document.getElementById("app").style.display="block";document.getElementById("ui").innerText="🕵️ ADMIN";}else{document.getElementById("ma").innerText="❌ Senha incorreta!";}}
-function c(m,s){var n=v*m;d+=Math.floor(Math.random()*200)+100;document.getElementById("st").innerHTML="📡 CONECTADO: "+s;document.getElementById("vl").innerText=n;document.getElementById("pg").innerText="⬇️ "+n+" | ⬆️ "+n+" | Ping: "+(m>=20?"1ms":"5ms");document.getElementById("cg").innerText="🔋 "+(m>=20?"100%":"85%")+" | ☁️";document.getElementById("lg").innerText="[LOG] "+s+": "+m+"x | "+n+" Mbps | "+d+" KB";}
+
+function c(m,s){
+var n=v*m;d+=Math.floor(Math.random()*200)+100;
+document.getElementById("st").innerHTML="📡 CONECTADO: "+s;
+document.getElementById("vl").innerText=n;
+document.getElementById("pg").innerText="⬇️ "+n+" | ⬆️ "+n+" | Ping: "+(m>=20?"1ms":"5ms");
+document.getElementById("cg").innerText="🔋 "+(m>=20?"100%":"85%")+" | ☁️";
+document.getElementById("lg").innerText="[LOG] "+s+": "+m+"x | "+n+" Mbps | "+d+" KB";
+}
+
 function p(){document.getElementById("lg").innerText="📊 "+v+" Mbps | "+d+" KB | ☁️ 24H";}
 function seg(){document.getElementById("lg").innerText="🛡️ SHA-256 | Firewall ON";}
 function s(){document.getElementById("app").style.display="none";document.getElementById("login").style.display="block";}
