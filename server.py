@@ -1,4 +1,5 @@
-    from http.server import HTTPServer, BaseHTTPRequestHandler
+import http.server
+import socketserver
 import os
 
 PORT = int(os.environ.get("PORT", 8080))
@@ -91,12 +92,13 @@ function s(){document.getElementById("app").style.display="none";document.getEle
 </body>
 </html>"""
 
-class Handler(BaseHTTPRequestHandler):
+class MeuServidor(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
         self.send_response(200)
         self.send_header("Content-type", "text/html; charset=utf-8")
         self.end_headers()
         self.wfile.write(HTML.encode("utf-8"))
 
-print(f"MEGA WIFI 5G rodando na porta {PORT}")
-HTTPServer(("0.0.0.0", PORT), Handler).serve_forever()
+print(f"MEGA WIFI rodando na porta {PORT}")
+with socketserver.TCPServer(("0.0.0.0", PORT), MeuServidor) as httpd:
+    httpd.serve_forever()
