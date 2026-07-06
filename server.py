@@ -1,5 +1,4 @@
-    httpd.serve_forever()
-from http.server import HTTPServer, BaseHTTPRequestHandler
+    from http.server import HTTPServer, BaseHTTPRequestHandler
 import os
 
 PORT = int(os.environ.get("PORT", 8080))
@@ -98,10 +97,6 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Content-type", "text/html; charset=utf-8")
         self.end_headers()
         self.wfile.write(HTML.encode("utf-8"))
-    def do_HEAD(self):
-        self.send_response(200)
-        self.send_header("Content-type", "text/html; charset=utf-8")
-        self.end_headers()
 
 print(f"MEGA WIFI 5G rodando na porta {PORT}")
 HTTPServer(("0.0.0.0", PORT), Handler).serve_forever()
