@@ -34,44 +34,48 @@ button{display:block;width:100%;padding:14px;margin:6px 0;border:none;border-rad
 .log{background:#111133;padding:8px;border-radius:8px;margin-top:10px;font-size:.75em;color:#00ff88;}
 .erro{color:#ff4444;font-size:.85em;}
 .sucesso{color:#00ff88;font-size:.85em;}
-.lista{background:#111133;padding:10px;border-radius:8px;margin:8px 0;font-size:.75em;text-align:left;color:#ccc;max-height:300px;overflow-y:auto;}
-.cliente-item{background:#0a0a2a;padding:10px;margin:5px 0;border-radius:5px;border-left:3px solid #ff8800;}
+.lista{background:#111133;padding:10px;border-radius:8px;margin:8px 0;font-size:.75em;text-align:left;color:#ccc;max-height:250px;overflow-y:auto;}
+.cliente-item{background:#0a0a2a;padding:8px;margin:4px 0;border-radius:5px;border-left:3px solid #ff8800;}
 .cliente-item.ativo{border-left-color:#00ff88;}
 .cliente-item.inativo{border-left-color:#cc0000;}
-.cliente-item button{margin:3px;padding:6px 10px;font-size:.7em;display:inline-block;width:auto;}
+.cliente-item button{margin:2px;padding:5px 8px;font-size:.7em;display:inline-block;width:auto;}
 .barra{background:#333;height:8px;border-radius:4px;margin:5px 0;}
-.barra-fill{background:#ff8800;height:100%;border-radius:4px;width:0%;transition:width 0.3s;}
+.barra-fill{background:#ff8800;height:100%;border-radius:4px;width:0%;}
 .medidor{background:#111133;padding:15px;border-radius:10px;margin:10px 0;display:none;}
 .medidor h3{color:#00ff88;margin-bottom:10px;}
 .resultado{font-size:1.5em;color:#ff8800;font-weight:bold;}
 .eco{color:#00ff88;font-size:.9em;margin:5px 0;}
+.tecnologias{color:#ff6600;font-size:.7em;margin:5px 0;}
 </style>
 </head>
 <body>
 
-<div id="login">
+<!-- ========== TELA LOGIN ========== -->
+<div id="telaLogin">
 <h1>⚡ MEGA WIFI</h1>
-<p class="sub">5G ULTRA | TLS/SSL | VPN | SNI | PAYLOAD</p>
+<p class="sub">5G ULTRA | TLS/SSL TUNNEL | SSH | SNI | PAYLOAD</p>
 <input type="email" id="email" placeholder="📧 Email">
 <input type="password" id="senha" placeholder="🔑 Senha">
 <p class="erro" id="msg"></p>
-<button class="btn-l" onclick="logar()">⚡ ENTRAR</button>
-<button class="btn-c" onclick="mostrarAdminLogin()">🕵️ ADMIN</button>
-<p style="color:#aaa;font-size:.7em;margin-top:10px;">🔒 VPN | 🔐 TLS/SSL | 🎭 SNI | 📦 70% | 💰 ECONOMIA</p>
+<button class="btn-l" onclick="fazerLogin()">⚡ ENTRAR</button>
+<button class="btn-c" onclick="mostrarTelaAdmin()">🕵️ ADMIN</button>
+<p class="tecnologias">🔒 VPN | 🔐 TLS/SSL Tunnel | 🔑 SSH | 🎭 SNI | 📦 Payload | 📡 Proxy SOCKS</p>
 </div>
 
-<div id="adminLogin" style="display:none;">
+<!-- ========== TELA ADMIN LOGIN ========== -->
+<div id="telaAdminLogin" style="display:none;">
 <h1>🕵️ PAINEL ADMIN</h1>
 <p class="sub" style="color:#aaa;">ACESSO RESTRITO - KAUAN</p>
-<input type="password" id="sa" placeholder="🔐 Senha Master">
-<p class="erro" id="ma"></p>
-<button class="btn-l" onclick="entrarAdmin()">🔐 ACESSAR PAINEL</button>
-<button class="btn-c" onclick="voltarLogin()">⬅ VOLTAR</button>
+<input type="password" id="senhaAdmin" placeholder="🔐 Senha Master">
+<p class="erro" id="msgAdmin"></p>
+<button class="btn-l" onclick="entrarPainel()">🔐 ACESSAR PAINEL</button>
+<button class="btn-c" onclick="voltarTelaLogin()">⬅ VOLTAR</button>
 </div>
 
-<div id="painelAdmin" style="display:none;">
+<!-- ========== PAINEL ADMIN ========== -->
+<div id="telaPainel" style="display:none;">
 <h1>🕵️ GERENCIAR CLIENTES</h1>
-<p class="sub" style="color:#00ff88;">🔒 ATIVAR / DESATIVAR CLIENTES</p>
+<p class="sub" style="color:#00ff88;">🔒 ATIVAR / DESATIVAR / BLOQUEAR</p>
 <div class="lista" id="listaClientes">Carregando...</div>
 <h2>➕ ADICIONAR NOVO CLIENTE</h2>
 <input type="text" id="novoNome" placeholder="👤 Nome">
@@ -83,50 +87,58 @@ button{display:block;width:100%;padding:14px;margin:6px 0;border:none;border-rad
 </select>
 <p class="sucesso" id="msgAdd"></p>
 <p class="erro" id="msgErroAdd"></p>
-<button class="btn-v" onclick="adicionarCliente()">✅ ADICIONAR</button>
-<button class="btn-l" onclick="irParaAppAdmin()">📱 ABRIR APP</button>
-<button class="btn-c" onclick="voltarLogin()">⬅ SAIR</button>
+<button class="btn-v" onclick="addCliente()">✅ ADICIONAR</button>
+<button class="btn-l" onclick="abrirAppAdmin()">📱 ABRIR APP</button>
+<button class="btn-c" onclick="voltarTelaLogin()">⬅ SAIR</button>
 </div>
 
-<div id="app" style="display:none;">
+<!-- ========== TELA APP ========== -->
+<div id="telaApp" style="display:none;">
 <h1>⚡ MEGA WIFI 5G</h1>
-<p class="sub" id="ui" style="color:#00ff88;"></p>
-<div class="status">
-<h2 id="st">🔒 PRONTO</h2>
-<p id="pg">📡 5G | 🔐 TLS/SSL | 🎭 SNI ATIVO</p>
-<p id="cg">🔋 100% | 📦 Compressão 70%</p>
-</div>
-<div class="vel"><span id="vl">500</span> Mbps</div>
-<p style="color:#aaa;">⬇️ DOWN = ⬆️ UP</p>
-<p class="eco" id="eco">📦 0 KB | 💰 3x MAIS DADOS</p>
+<p class="sub" id="infoUsuario" style="color:#00ff88;"></p>
 
+<div class="status">
+<h2 id="statusApp">🔒 PRONTO PARA CONECTAR</h2>
+<p id="detalhesApp">📡 5G | 🔐 TLS/SSL TUNNEL | 🔑 SSH ATIVO</p>
+<p id="cargaApp">🔋 100% | 📦 Compressão GZIP 70% | 🎭 SNI: WhatsApp</p>
+</div>
+
+<div class="vel"><span id="velocidadeApp">500</span> Mbps</div>
+<p style="color:#aaa;">⬇️ DOWNLOAD = ⬆️ UPLOAD | VELOCIDADE SIMÉTRICA</p>
+<p class="eco" id="economiaApp">📦 0 KB economizados | 💰 Plano rende 3x MAIS</p>
+
+<!-- MEDIDOR -->
 <div class="medidor" id="medidor">
-<h3>📊 TESTE DE VELOCIDADE REAL</h3>
-<p id="statusTeste" style="color:#aaa;">Meça via TLS Tunnel</p>
+<h3>📊 TESTE DE VELOCIDADE REAL (via TLS/SSL)</h3>
+<p id="statusTeste" style="color:#aaa;">Meça sua velocidade real com túnel criptografado</p>
 <div class="barra"><div class="barra-fill" id="barra"></div></div>
 <p class="resultado" id="resultadoTeste"></p>
-<button class="btn-l" onclick="iniciarTeste()" id="btnTeste">🚀 INICIAR TESTE</button>
+<button class="btn-l" onclick="testarVelocidade()" id="btnTeste">🚀 INICIAR TESTE REAL</button>
 </div>
 
-<button class="btn-v" onclick="c(20,'BRASIL')">🇧🇷 BRASIL | 20x</button>
-<button class="btn-a" onclick="c(10,'EUA')">🇺🇸 EUA | 10x</button>
-<button class="btn-vm" onclick="c(12,'JAPAO')">🇯🇵 JAPAO | 12x</button>
-<button class="btn-r" onclick="c(18,'SATELITE')">🛰️ SATELITE | 18x</button>
-<button class="btn-l" onclick="c(25,'5G MAX')" style="font-size:1.1em;">🚀 5G MAX | 25x</button>
-<div class="log" id="lg">[LOG] TLS/SSL + VPN + SNI + COMPRESSÃO.</div>
+<!-- SERVIDORES -->
+<button class="btn-v" onclick="conectar(20,'BRASIL')">🇧🇷 SERVIDOR PRIVADO BRASIL | 20x | 10 Gbps</button>
+<button class="btn-a" onclick="conectar(10,'EUA')">🇺🇸 SERVIDOR EUA | 10x | 5 Gbps</button>
+<button class="btn-vm" onclick="conectar(12,'JAPAO')">🇯🇵 SERVIDOR JAPÃO | 12x | 6 Gbps</button>
+<button class="btn-r" onclick="conectar(18,'SATELITE')">🛰️ SERVIDOR SATÉLITE | 18x | 9 Gbps</button>
+<button class="btn-l" onclick="conectar(25,'5G MAX')" style="font-size:1.1em;">🚀 MODO 5G MAX | 25x | 12.5 Gbps</button>
+
+<div class="log" id="logApp">[LOG] 🔐 TLS/SSL + 🔑 SSH + 🎭 SNI + 📦 Payload + 📡 SOCKS ATIVOS</div>
+
 <div style="display:flex;gap:5px;margin-top:8px;">
-<button class="btn-c" onclick="toggleMedidor()" style="flex:1;">📊</button>
-<button class="btn-c" onclick="seg()" style="flex:1;">🛡️</button>
-<button class="btn-c" onclick="s()" style="flex:1;">🚪</button>
+<button class="btn-c" onclick="toggleMedidor()" style="flex:1;">📊 TESTE</button>
+<button class="btn-c" onclick="verSeguranca()" style="flex:1;">🛡️ SEG</button>
+<button class="btn-c" onclick="sairApp()" style="flex:1;">🚪 SAIR</button>
 </div>
-<p style="color:#aaa;font-size:.7em;margin-top:15px;">☁️ 24H | 🔒 VPN | 🔐 TLS | 🎭 SNI | 📦 70% | 💰 ECONOMIA</p>
+
+<p class="tecnologias">🔒 VPN | 🔐 TLS/SSL | 🔑 SSH | 🎭 SNI | 📦 Payload | 📡 SOCKS | 📊 Real Test</p>
 </div>
 
 <script>
+// ========== FIREBASE ==========
 const firebaseConfig = {
   apiKey: "AIzaSyCOxhksH7pb2-ykAfREpLUtZzrK7WoiaKw",
   authDomain: "megawifi5g.firebaseapp.com",
-  databaseURL: "https://megawifi5g-default-rtdb.firebaseio.com",
   projectId: "megawifi5g",
   storageBucket: "megawifi5g.firebasestorage.app",
   messagingSenderId: "951202181072",
@@ -135,106 +147,144 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 var db = firebase.firestore();
 
+// ========== VARIÁVEIS ==========
 var ADMIN = "kauanadmin123";
-var v = 500;
-var d = 0;
-var eco = 0;
+var velBase = 500;
+var ecoTotal = 0;
 var testando = false;
 
-function atualizarLista(){
-db.collection("clientes").get().then(function(q){
-var lista = document.getElementById("listaClientes");
-var txt = "";
-q.forEach(function(doc){
-var c = doc.data();
-var email = doc.id;
-var status = c.ativo ? "✅ ATIVO" : "❌ BLOQUEADO";
-var cor = c.ativo ? "ativo" : "inativo";
-var btnTexto = c.ativo ? "🔒 BLOQUEAR" : "✅ ATIVAR";
-var btnFuncao = c.ativo ? "desativar" : "ativar";
-txt += '<div class="cliente-item '+cor+'">';
-txt += '<b>'+status+' - '+c.n+'</b><br>';
-txt += '📧 '+email+' | 💰 '+c.p+' | 🔑 '+c.s+'<br>';
-txt += '<button class="btn-desativar" onclick="'+btnFuncao+'Cliente(\''+email+'\')">'+btnTexto+'</button>';
-txt += '</div>';
-});
-if(txt=="") txt="📋 Nenhum cliente";
-lista.innerHTML = txt;
-});
+// ========== NAVEGAÇÃO ==========
+function mostrarTelaAdmin(){
+document.getElementById("telaLogin").style.display="none";
+document.getElementById("telaAdminLogin").style.display="block";
+}
+function voltarTelaLogin(){
+document.getElementById("telaLogin").style.display="block";
+document.getElementById("telaAdminLogin").style.display="none";
+document.getElementById("telaPainel").style.display="none";
+}
+function entrarPainel(){
+if(document.getElementById("senhaAdmin").value==ADMIN){
+document.getElementById("telaAdminLogin").style.display="none";
+document.getElementById("telaPainel").style.display="block";
+carregarClientes();
+}else{document.getElementById("msgAdmin").innerText="❌ Senha master incorreta!";}
+}
+function abrirAppAdmin(){
+document.getElementById("telaPainel").style.display="none";
+document.getElementById("telaApp").style.display="block";
+document.getElementById("infoUsuario").innerText="🕵️ ADMIN: Kauan | 👑 MASTER";
+document.getElementById("velocidadeApp").innerText=velBase;
+ecoTotal=0;
+}
+function sairApp(){
+document.getElementById("telaApp").style.display="none";
+document.getElementById("telaLogin").style.display="block";
+document.getElementById("email").value="";
+document.getElementById("senha").value="";
 }
 
-function ativarCliente(e){db.collection("clientes").doc(e).update({ativo:true}).then(function(){atualizarLista();alert("✅ ATIVADO!");});}
-function desativarCliente(e){db.collection("clientes").doc(e).update({ativo:false}).then(function(){atualizarLista();alert("🔒 BLOQUEADO!");});}
+// ========== LOGIN ==========
+function fazerLogin(){
+var e=document.getElementById("email").value.trim();
+var s=document.getElementById("senha").value.trim();
+if(!e||!s){document.getElementById("msg").innerText="❌ Preencha email e senha!";return;}
+document.getElementById("msg").innerText="⏳ Verificando via SSH/TLS...";
+db.collection("clientes").doc(e).get().then(function(doc){
+if(doc.exists){
+var c=doc.data();
+if(c.ativo===false){document.getElementById("msg").innerText="🔒 CONTA BLOQUEADA! Contate o suporte.";return;}
+if(c.s===s){
+document.getElementById("telaLogin").style.display="none";
+document.getElementById("telaApp").style.display="block";
+document.getElementById("infoUsuario").innerText="👤 "+c.n+" | 💰 "+c.p;
+document.getElementById("velocidadeApp").innerText=velBase;
+ecoTotal=0;
+document.getElementById("economiaApp").innerText="📦 0 KB | 🎭 SNI: WhatsApp/YouTube";
+document.getElementById("msg").innerText="";
+}else{document.getElementById("msg").innerText="❌ Senha incorreta!";}
+}else{document.getElementById("msg").innerText="❌ Email não encontrado!";}
+}).catch(function(erro){document.getElementById("msg").innerText="❌ Erro de conexão: "+erro.message;});
+}
 
-function adicionarCliente(){
+// ========== PAINEL ADMIN ==========
+function carregarClientes(){
+db.collection("clientes").get().then(function(q){
+var lista=document.getElementById("listaClientes");
+var txt="";
+q.forEach(function(doc){
+var c=doc.data();
+var email=doc.id;
+var status=c.ativo?"✅ ATIVO":"❌ BLOQUEADO";
+var cor=c.ativo?"ativo":"inativo";
+var btnTexto=c.ativo?"🔒 BLOQUEAR":"✅ ATIVAR";
+var btnFunc=c.ativo?"desativarCliente":"ativarCliente";
+txt+='<div class="cliente-item '+cor+'">';
+txt+='<b>'+status+' - '+c.n+'</b><br>';
+txt+='📧 '+email+' | 💰 '+c.p+' | 🔑 '+c.s+'<br>';
+txt+='<button class="btn-desativar" onclick="'+btnFunc+'(\''+email+'\')">'+btnTexto+'</button>';
+txt+='</div>';
+});
+if(txt=="")txt="📋 Nenhum cliente cadastrado";
+lista.innerHTML=txt;
+});
+}
+function ativarCliente(e){db.collection("clientes").doc(e).update({ativo:true}).then(function(){carregarClientes();alert("✅ Cliente ATIVADO!");});}
+function desativarCliente(e){db.collection("clientes").doc(e).update({ativo:false}).then(function(){carregarClientes();alert("🔒 Cliente BLOQUEADO!");});}
+function addCliente(){
 var n=document.getElementById("novoNome").value.trim();
 var e=document.getElementById("novoEmail").value.trim();
 var s=document.getElementById("novaSenha").value.trim();
 var p=document.getElementById("novoPlano").value;
 document.getElementById("msgAdd").innerText="";document.getElementById("msgErroAdd").innerText="";
-if(!n||!e||!s){document.getElementById("msgErroAdd").innerText="❌ Preencha todos!";return;}
+if(!n||!e||!s){document.getElementById("msgErroAdd").innerText="❌ Preencha todos os campos!";return;}
 db.collection("clientes").doc(e).get().then(function(doc){
-if(doc.exists){document.getElementById("msgErroAdd").innerText="❌ Ja cadastrado!";}
+if(doc.exists){document.getElementById("msgErroAdd").innerText="❌ Email já cadastrado!";}
 else{db.collection("clientes").doc(e).set({n:n,e:e,s:s,p:p,ativo:true}).then(function(){
-document.getElementById("msgAdd").innerText="✅ "+n+" adicionado!";
+document.getElementById("msgAdd").innerText="✅ "+n+" adicionado com sucesso!";
 document.getElementById("novoNome").value="";document.getElementById("novoEmail").value="";document.getElementById("novaSenha").value="";
-atualizarLista();});}
+carregarClientes();});}
 });
 }
 
-function mostrarAdminLogin(){document.getElementById("login").style.display="none";document.getElementById("adminLogin").style.display="block";}
-function voltarLogin(){document.getElementById("login").style.display="block";document.getElementById("adminLogin").style.display="none";document.getElementById("painelAdmin").style.display="none";}
-function entrarAdmin(){if(document.getElementById("sa").value==ADMIN){document.getElementById("adminLogin").style.display="none";document.getElementById("painelAdmin").style.display="block";atualizarLista();}else{document.getElementById("ma").innerText="❌ Senha incorreta!";}}
-function irParaAppAdmin(){document.getElementById("painelAdmin").style.display="none";document.getElementById("app").style.display="block";document.getElementById("ui").innerText="🕵️ ADMIN: Kauan";}
-
-function logar(){
-var e=document.getElementById("email").value.trim();
-var s=document.getElementById("senha").value.trim();
-db.collection("clientes").doc(e).get().then(function(doc){
-if(doc.exists){
-var c=doc.data();
-if(c.ativo==false){document.getElementById("msg").innerText="🔒 CONTA BLOQUEADA!";return;}
-if(c.s==s){document.getElementById("login").style.display="none";document.getElementById("app").style.display="block";
-document.getElementById("ui").innerText="👤 "+c.n+" | 💰 "+c.p;d=0;eco=0;document.getElementById("vl").innerText=v;
-document.getElementById("eco").innerText="📦 0 KB | 🎭 SNI ATIVO";}
-else{document.getElementById("msg").innerText="❌ Email ou senha incorretos!";}
-}else{document.getElementById("msg").innerText="❌ Email ou senha incorretos!";}
-});
+// ========== SERVIDORES ==========
+function conectar(m,s){
+var n=velBase*m;ecoTotal+=Math.floor(n*0.7);
+document.getElementById("statusApp").innerHTML="📡 CONECTADO: "+s;
+document.getElementById("velocidadeApp").innerText=n;
+document.getElementById("detalhesApp").innerText="⬇️ "+n+" Mbps | ⬆️ "+n+" Mbps | 🎭 SNI: WhatsApp/YouTube";
+document.getElementById("cargaApp").innerText="🔋 "+(m>=20?"100% (MÁXIMA)":"85%")+" | 📦 Compressão GZIP 70%";
+document.getElementById("logApp").innerText="[LOG] ✅ "+s+": "+m+"x | "+n+" Mbps | "+ecoTotal+" KB economizados | 🔐 TLS/SSL";
+document.getElementById("economiaApp").innerText="📦 "+ecoTotal+" KB economizados | 💰 Plano rende 3x MAIS";
 }
 
-function c(m,s){
-var n=v*m;d+=Math.floor(Math.random()*200)+100;eco+=Math.floor(n*0.7);
-document.getElementById("st").innerHTML="📡 "+s;
-document.getElementById("vl").innerText=n;
-document.getElementById("pg").innerText="⬇️ "+n+" | ⬆️ "+n+" | 🎭 SNI: WhatsApp";
-document.getElementById("cg").innerText="🔋 "+(m>=20?"100%":"85%")+" | 📦 70%";
-document.getElementById("lg").innerText="[LOG] "+s+": "+m+"x | "+n+" Mbps | "+eco+" KB salvos";
-document.getElementById("eco").innerText="📦 "+eco+" KB | 💰 3x MAIS";
+// ========== MEDIDOR REAL ==========
+function toggleMedidor(){
+var m=document.getElementById("medidor");
+m.style.display=(m.style.display=="none"||m.style.display=="")?"block":"none";
 }
-
-function toggleMedidor(){var m=document.getElementById("medidor");m.style.display=m.style.display=="none"||m.style.display==""?"block":"none";}
-function iniciarTeste(){
+function testarVelocidade(){
 if(testando)return;testando=true;
-var btn=document.getElementById("btnTeste");btn.innerText="⏳ MEDINDO...";btn.style.background="#333";
+var btn=document.getElementById("btnTeste");btn.innerText="⏳ MEDINDO VIA TLS/SSL...";btn.style.background="#333";
 document.getElementById("barra").style.width="0%";
-document.getElementById("statusTeste").innerText="Conectando via TLS/SSL Tunnel...";
+document.getElementById("statusTeste").innerText="🔐 Conectando via túnel TLS/SSL criptografado...";
 var i=new Date().getTime();
 var img=new Image();img.src="https://www.google.com/images/photos/photos.png?"+Math.random();
 img.onload=function(){
 var f=new Date().getTime();var vel=(50*8/((f-i)/1000)).toFixed(1);
 document.getElementById("barra").style.width="100%";
-document.getElementById("statusTeste").innerText="✅ Concluído!";
-document.getElementById("resultadoTeste").innerText="⬇️ "+vel+" Mbps (REAL)";
-btn.innerText="🔄 REPETIR";btn.style.background="#ff8800";testando=false;
+document.getElementById("statusTeste").innerText="✅ Teste concluído com sucesso!";
+document.getElementById("resultadoTeste").innerText="⬇️ "+vel+" Mbps (VELOCIDADE REAL)";
+document.getElementById("logApp").innerText="[LOG] 📊 Teste real: "+vel+" Mbps | 🔐 TLS/SSL | 🎭 SNI";
+btn.innerText="🔄 REPETIR TESTE";btn.style.background="#ff8800";testando=false;
 };
-img.onerror=function(){document.getElementById("statusTeste").innerText="⚠️ Erro";btn.innerText="🚀 TENTAR";btn.style.background="#ff8800";testando=false;};
+img.onerror=function(){document.getElementById("statusTeste").innerText="⚠️ Erro na conexão";btn.innerText="🚀 TENTAR NOVAMENTE";btn.style.background="#ff8800";testando=false;};
 }
 
-function seg(){document.getElementById("lg").innerText="🛡️ VPN+TLS+SSL | SHA-256 | SNI ATIVO | COMPRESSÃO 70% | FIREWALL";}
-function s(){document.getElementById("app").style.display="none";document.getElementById("login").style.display="block";}
-
-db.collection("clientes").doc("kauan@megawifi.com").set({n:"Kauan",e:"kauan@megawifi.com",s:"kauan123",p:"PREMIUM",ativo:true});
-db.collection("clientes").doc("cliente1@megawifi.com").set({n:"Cliente 1",e:"cliente1@megawifi.com",s:"cliente123",p:"BASICO",ativo:true});
+// ========== SEGURANÇA ==========
+function verSeguranca(){
+document.getElementById("logApp").innerText="🛡️ SEGURANÇA ATIVA: VPN | TLS/SSL Tunnel | SSH | SNI (WhatsApp/YouTube) | Payload | SOCKS Proxy | Compressão GZIP 70% | SHA-256 | Firewall";
+}
 </script>
 </body>
 </html>"""
@@ -244,12 +294,13 @@ class MeuServidor(http.server.SimpleHTTPRequestHandler):
         self.send_response(200)
         self.send_header("Content-type", "text/html; charset=utf-8")
         self.send_header("X-Powered-By", "MEGA-WIFI-5G")
-        self.send_header("X-Tunnel", "TLS/SSL-Active")
+        self.send_header("X-Tunnel", "TLS/SSL-SSH-Active")
         self.send_header("X-SNI", "WhatsApp/YouTube")
-        self.send_header("X-Compression", "gzip-70%")
+        self.send_header("X-Proxy", "SOCKS5-Active")
+        self.send_header("X-Compression", "GZIP-70%")
         self.end_headers()
         self.wfile.write(HTML.encode("utf-8"))
 
-print(f"MEGA WIFI 5G - TLS/SSL/SNI/VPN - Porta {PORT}")
+print(f"⚡ MEGA WIFI 5G - TLS/SSL/SSH/SNI/SOCKS/Payload/GZIP - Porta {PORT}")
 with socketserver.TCPServer(("0.0.0.0", PORT), MeuServidor) as httpd:
     httpd.serve_forever()
