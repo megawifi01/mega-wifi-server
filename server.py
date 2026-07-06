@@ -35,7 +35,6 @@ button{display:block;width:100%;padding:14px;margin:6px 0;border:none;border-rad
 </head>
 <body>
 
-<!-- ========== TELA LOGIN ========== -->
 <div id="login">
 <h1>⚡ MEGA WIFI</h1>
 <p class="sub">5G ULTRA | NUVEM 24H</p>
@@ -46,7 +45,6 @@ button{display:block;width:100%;padding:14px;margin:6px 0;border:none;border-rad
 <button class="btn-c" onclick="mostrarAdminLogin()">🕵️ ADMIN</button>
 </div>
 
-<!-- ========== TELA LOGIN ADMIN ========== -->
 <div id="adminLogin" style="display:none;">
 <h1>🕵️ PAINEL ADMIN</h1>
 <p class="sub" style="color:#aaa;">ACESSO RESTRITO - KAUAN</p>
@@ -56,13 +54,10 @@ button{display:block;width:100%;padding:14px;margin:6px 0;border:none;border-rad
 <button class="btn-c" onclick="voltarLogin()">⬅ VOLTAR</button>
 </div>
 
-<!-- ========== PAINEL ADMIN ========== -->
 <div id="painelAdmin" style="display:none;">
 <h1>🕵️ GERENCIAR CLIENTES</h1>
 <p class="sub" style="color:#00ff88;">Adicione e visualize seus clientes</p>
-
 <div class="lista" id="listaClientes">Carregando...</div>
-
 <h2>➕ ADICIONAR NOVO CLIENTE</h2>
 <input type="text" id="novoNome" placeholder="👤 Nome do cliente">
 <input type="email" id="novoEmail" placeholder="📧 Email do cliente">
@@ -78,7 +73,6 @@ button{display:block;width:100%;padding:14px;margin:6px 0;border:none;border-rad
 <button class="btn-c" onclick="voltarLogin()">⬅ SAIR</button>
 </div>
 
-<!-- ========== TELA APP ========== -->
 <div id="app" style="display:none;">
 <h1>⚡ MEGA WIFI 5G</h1>
 <p class="sub" id="ui" style="color:#00ff88;"></p>
@@ -104,98 +98,106 @@ button{display:block;width:100%;padding:14px;margin:6px 0;border:none;border-rad
 </div>
 
 <script>
-// BANCO DE CLIENTES
-var cl={
-"kauan@megawifi.com":{s:"kauan123",n:"Kauan",p:"PREMIUM"},
-"cliente1@megawifi.com":{s:"cliente123",n:"Cliente 1",p:"BASICO"}
+var cl = {
+"kauan@megawifi.com":{s:"kauan123",n:"Kauan",p:"PREMIUM",ativo:true},
+"cliente1@megawifi.com":{s:"cliente123",n:"Cliente 1",p:"BASICO",ativo:true}
 };
-var ADMIN="kauanadmin123";
-var v=Math.floor(Math.random()*200)+200;
-var d=0;
+var ADMIN = "kauanadmin123";
+var v = Math.floor(Math.random()*200)+200;
+var d = 0;
 
 function atualizarLista(){
-var lista=document.getElementById("listaClientes");
-var txt="📋 CLIENTES:\\n\\n";
+var lista = document.getElementById("listaClientes");
+var txt = "📋 CLIENTES:\\n\\n";
 for(var e in cl){
-txt+="✅ "+cl[e].n+"\\n   📧 "+e+"\\n   💰 "+cl[e].p+"\\n\\n";
+var status = cl[e].ativo ? "✅ ATIVO" : "❌ INATIVO";
+txt += status + " - " + cl[e].n + "\\n   📧 " + e + "\\n   💰 " + cl[e].p + "\\n   🔑 " + cl[e].s + "\\n\\n";
 }
-lista.innerText=txt;
+lista.innerText = txt;
 }
 
 function adicionarCliente(){
-var nome=document.getElementById("novoNome").value.trim();
-var email=document.getElementById("novoEmail").value.trim().toLowerCase();
-var senha=document.getElementById("novaSenha").value.trim();
-var plano=document.getElementById("novoPlano").value;
-if(nome&&email&&senha){
+var nome = document.getElementById("novoNome").value.trim();
+var email = document.getElementById("novoEmail").value.trim();
+var senha = document.getElementById("novaSenha").value.trim();
+var plano = document.getElementById("novoPlano").value;
+
+document.getElementById("msgAdd").innerText = "";
+document.getElementById("msgErroAdd").innerText = "";
+
+if(!nome || !email || !senha){
+document.getElementById("msgErroAdd").innerText = "❌ Preencha todos os campos!";
+return;
+}
+
 if(cl[email]){
-document.getElementById("msgErroAdd").innerText="❌ Email ja cadastrado!";
-document.getElementById("msgAdd").innerText="";
-}else{
-cl[email]={s:senha,n:nome,p:plano};
-document.getElementById("msgAdd").innerText="✅ "+nome+" adicionado!";
-document.getElementById("msgErroAdd").innerText="";
-document.getElementById("novoNome").value="";
-document.getElementById("novoEmail").value="";
-document.getElementById("novaSenha").value="";
+document.getElementById("msgErroAdd").innerText = "❌ Email ja cadastrado!";
+return;
+}
+
+cl[email] = {s:senha, n:nome, p:plano, ativo:true};
+document.getElementById("msgAdd").innerText = "✅ " + nome + " adicionado! Senha: " + senha;
+document.getElementById("novoNome").value = "";
+document.getElementById("novoEmail").value = "";
+document.getElementById("novaSenha").value = "";
 atualizarLista();
-}
-}else{
-document.getElementById("msgErroAdd").innerText="❌ Preencha todos os campos!";
-document.getElementById("msgAdd").innerText="";
-}
 }
 
 function mostrarAdminLogin(){
-document.getElementById("login").style.display="none";
-document.getElementById("adminLogin").style.display="block";
+document.getElementById("login").style.display = "none";
+document.getElementById("adminLogin").style.display = "block";
 }
 
 function voltarLogin(){
-document.getElementById("login").style.display="block";
-document.getElementById("adminLogin").style.display="none";
-document.getElementById("painelAdmin").style.display="none";
+document.getElementById("login").style.display = "block";
+document.getElementById("adminLogin").style.display = "none";
+document.getElementById("painelAdmin").style.display = "none";
 }
 
 function entrarAdmin(){
-if(document.getElementById("sa").value==ADMIN){
-document.getElementById("adminLogin").style.display="none";
-document.getElementById("painelAdmin").style.display="block";
+if(document.getElementById("sa").value == ADMIN){
+document.getElementById("adminLogin").style.display = "none";
+document.getElementById("painelAdmin").style.display = "block";
 atualizarLista();
 }else{
-document.getElementById("ma").innerText="❌ Senha master incorreta!";
+document.getElementById("ma").innerText = "❌ Senha master incorreta!";
 }
 }
 
 function irParaAppAdmin(){
-document.getElementById("painelAdmin").style.display="none";
-document.getElementById("app").style.display="block";
-document.getElementById("ui").innerText="🕵️ ADMIN: Kauan";
+document.getElementById("painelAdmin").style.display = "none";
+document.getElementById("app").style.display = "block";
+document.getElementById("ui").innerText = "🕵️ ADMIN: Kauan";
 }
 
 function logar(){
-var e=document.getElementById("email").value.trim().toLowerCase();
-var s=document.getElementById("senha").value.trim();
-if(cl[e]&&cl[e].s==s){
-document.getElementById("login").style.display="none";
-document.getElementById("app").style.display="block";
-document.getElementById("ui").innerText="👤 "+cl[e].n+" | 💰 "+cl[e].p;
-d=0;document.getElementById("vl").innerText=v;
-}else{document.getElementById("msg").innerText="❌ Email ou senha incorretos!";}
+var e = document.getElementById("email").value.trim();
+var s = document.getElementById("senha").value.trim();
+if(cl[e] && cl[e].s == s && cl[e].ativo){
+document.getElementById("login").style.display = "none";
+document.getElementById("app").style.display = "block";
+document.getElementById("ui").innerText = "👤 " + cl[e].n + " | 💰 " + cl[e].p;
+d = 0;
+document.getElementById("vl").innerText = v;
+document.getElementById("msg").innerText = "";
+}else{
+document.getElementById("msg").innerText = "❌ Email ou senha incorretos!";
+}
 }
 
 function c(m,s){
-var n=v*m;d+=Math.floor(Math.random()*200)+100;
-document.getElementById("st").innerHTML="📡 CONECTADO: "+s;
-document.getElementById("vl").innerText=n;
-document.getElementById("pg").innerText="⬇️ "+n+" | ⬆️ "+n+" | Ping: "+(m>=20?"1ms":"5ms");
-document.getElementById("cg").innerText="🔋 "+(m>=20?"100%":"85%")+" | ☁️";
-document.getElementById("lg").innerText="[LOG] "+s+": "+m+"x | "+n+" Mbps | "+d+" KB";
+var n = v*m;
+d += Math.floor(Math.random()*200)+100;
+document.getElementById("st").innerHTML = "📡 CONECTADO: " + s;
+document.getElementById("vl").innerText = n;
+document.getElementById("pg").innerText = "⬇️ " + n + " | ⬆️ " + n + " | Ping: " + (m>=20?"1ms":"5ms");
+document.getElementById("cg").innerText = "🔋 " + (m>=20?"100%":"85%") + " | ☁️";
+document.getElementById("lg").innerText = "[LOG] " + s + ": " + m + "x | " + n + " Mbps | " + d + " KB";
 }
 
-function p(){document.getElementById("lg").innerText="📊 "+v+" Mbps | "+d+" KB | ☁️ 24H";}
-function seg(){document.getElementById("lg").innerText="🛡️ SHA-256 | Firewall ON";}
-function s(){document.getElementById("app").style.display="none";document.getElementById("login").style.display="block";}
+function p(){document.getElementById("lg").innerText = "📊 " + v + " Mbps | " + d + " KB | ☁️ 24H";}
+function seg(){document.getElementById("lg").innerText = "🛡️ SHA-256 | Firewall ON";}
+function s(){document.getElementById("app").style.display = "none";document.getElementById("login").style.display = "block";}
 </script>
 </body>
 </html>"""
