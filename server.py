@@ -10,6 +10,8 @@ HTML = """<!DOCTYPE html>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MEGA WIFI 5G</title>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:#0a0a1a;color:#fff;font-family:Arial;text-align:center;padding:15px;}
@@ -94,26 +96,40 @@ button{display:block;width:100%;padding:14px;margin:6px 0;border:none;border-rad
 <button class="btn-c" onclick="seg()" style="flex:1;">🛡️</button>
 <button class="btn-c" onclick="s()" style="flex:1;">🚪</button>
 </div>
-<p style="color:#aaa;font-size:.7em;margin-top:15px;">☁️ NUVEM 24H</p>
+<p style="color:#aaa;font-size:.7em;margin-top:15px;">☁️ NUVEM 24H | FIREBASE</p>
 </div>
 
 <script>
-var cl = {
-"kauan@megawifi.com":{s:"kauan123",n:"Kauan",p:"PREMIUM",ativo:true},
-"cliente1@megawifi.com":{s:"cliente123",n:"Cliente 1",p:"BASICO",ativo:true}
+// FIREBASE
+const firebaseConfig = {
+  apiKey: "AIzaSyCOxhksH7pb2-ykAfREpLUtZzrK7WoiaKw",
+  authDomain: "megawifi5g.firebaseapp.com",
+  databaseURL: "https://megawifi5g-default-rtdb.firebaseio.com",
+  projectId: "megawifi5g",
+  storageBucket: "megawifi5g.firebasestorage.app",
+  messagingSenderId: "951202181072",
+  appId: "1:951202181072:web:99d67304570016692ad3d5",
+  measurementId: "G-QKPXYB1DFN"
 };
+
+firebase.initializeApp(firebaseConfig);
+var db = firebase.firestore();
+
 var ADMIN = "kauanadmin123";
 var v = Math.floor(Math.random()*200)+200;
 var d = 0;
 
 function atualizarLista(){
+db.collection("clientes").get().then(function(querySnapshot){
 var lista = document.getElementById("listaClientes");
 var txt = "📋 CLIENTES:\\n\\n";
-for(var e in cl){
-var status = cl[e].ativo ? "✅ ATIVO" : "❌ INATIVO";
-txt += status + " - " + cl[e].n + "\\n   📧 " + e + "\\n   💰 " + cl[e].p + "\\n   🔑 " + cl[e].s + "\\n\\n";
-}
+querySnapshot.forEach(function(doc){
+var c = doc.data();
+var status = c.ativo ? "✅ ATIVO" : "❌ INATIVO";
+txt += status + " - " + c.n + "\\n   📧 " + c.e + "\\n   💰 " + c.p + "\\n   🔑 " + c.s + "\\n\\n";
+});
 lista.innerText = txt;
+});
 }
 
 function adicionarCliente(){
@@ -121,83 +137,85 @@ var nome = document.getElementById("novoNome").value.trim();
 var email = document.getElementById("novoEmail").value.trim();
 var senha = document.getElementById("novaSenha").value.trim();
 var plano = document.getElementById("novoPlano").value;
-
 document.getElementById("msgAdd").innerText = "";
 document.getElementById("msgErroAdd").innerText = "";
-
 if(!nome || !email || !senha){
-document.getElementById("msgErroAdd").innerText = "❌ Preencha todos os campos!";
+document.getElementById("msgErroAdd").innerText = "❌ Preencha todos!";
 return;
 }
-
-if(cl[email]){
-document.getElementById("msgErroAdd").innerText = "❌ Email ja cadastrado!";
-return;
-}
-
-cl[email] = {s:senha, n:nome, p:plano, ativo:true};
+db.collection("clientes").doc(email).get().then(function(doc){
+if(doc.exists){
+document.getElementById("msgErroAdd").innerText = "❌ Ja cadastrado!";
+}else{
+db.collection("clientes").doc(email).set({n:nome, e:email, s:senha, p:plano, ativo:true}).then(function(){
 document.getElementById("msgAdd").innerText = "✅ " + nome + " adicionado! Senha: " + senha;
-document.getElementById("novoNome").value = "";
-document.getElementById("novoEmail").value = "";
-document.getElementById("novaSenha").value = "";
+document.getElementById("novoNome").value="";
+document.getElementById("novoEmail").value="";
+document.getElementById("novaSenha").value="";
 atualizarLista();
+});
+}
+});
 }
 
 function mostrarAdminLogin(){
-document.getElementById("login").style.display = "none";
-document.getElementById("adminLogin").style.display = "block";
+document.getElementById("login").style.display="none";
+document.getElementById("adminLogin").style.display="block";
 }
 
 function voltarLogin(){
-document.getElementById("login").style.display = "block";
-document.getElementById("adminLogin").style.display = "none";
-document.getElementById("painelAdmin").style.display = "none";
+document.getElementById("login").style.display="block";
+document.getElementById("adminLogin").style.display="none";
+document.getElementById("painelAdmin").style.display="none";
 }
 
 function entrarAdmin(){
-if(document.getElementById("sa").value == ADMIN){
-document.getElementById("adminLogin").style.display = "none";
-document.getElementById("painelAdmin").style.display = "block";
+if(document.getElementById("sa").value==ADMIN){
+document.getElementById("adminLogin").style.display="none";
+document.getElementById("painelAdmin").style.display="block";
 atualizarLista();
-}else{
-document.getElementById("ma").innerText = "❌ Senha master incorreta!";
-}
+}else{document.getElementById("ma").innerText="❌ Senha incorreta!";}
 }
 
 function irParaAppAdmin(){
-document.getElementById("painelAdmin").style.display = "none";
-document.getElementById("app").style.display = "block";
-document.getElementById("ui").innerText = "🕵️ ADMIN: Kauan";
+document.getElementById("painelAdmin").style.display="none";
+document.getElementById("app").style.display="block";
+document.getElementById("ui").innerText="🕵️ ADMIN: Kauan";
 }
 
 function logar(){
-var e = document.getElementById("email").value.trim();
-var s = document.getElementById("senha").value.trim();
-if(cl[e] && cl[e].s == s && cl[e].ativo){
-document.getElementById("login").style.display = "none";
-document.getElementById("app").style.display = "block";
-document.getElementById("ui").innerText = "👤 " + cl[e].n + " | 💰 " + cl[e].p;
-d = 0;
-document.getElementById("vl").innerText = v;
-document.getElementById("msg").innerText = "";
-}else{
-document.getElementById("msg").innerText = "❌ Email ou senha incorretos!";
-}
+var e=document.getElementById("email").value.trim();
+var s=document.getElementById("senha").value.trim();
+db.collection("clientes").doc(e).get().then(function(doc){
+if(doc.exists){
+var c=doc.data();
+if(c.s==s && c.ativo){
+document.getElementById("login").style.display="none";
+document.getElementById("app").style.display="block";
+document.getElementById("ui").innerText="👤 "+c.n+" | 💰 "+c.p;
+d=0;document.getElementById("vl").innerText=v;
+document.getElementById("msg").innerText="";
+}else{document.getElementById("msg").innerText="❌ Email ou senha incorretos!";}
+}else{document.getElementById("msg").innerText="❌ Email ou senha incorretos!";}
+});
 }
 
 function c(m,s){
-var n = v*m;
-d += Math.floor(Math.random()*200)+100;
-document.getElementById("st").innerHTML = "📡 CONECTADO: " + s;
-document.getElementById("vl").innerText = n;
-document.getElementById("pg").innerText = "⬇️ " + n + " | ⬆️ " + n + " | Ping: " + (m>=20?"1ms":"5ms");
-document.getElementById("cg").innerText = "🔋 " + (m>=20?"100%":"85%") + " | ☁️";
-document.getElementById("lg").innerText = "[LOG] " + s + ": " + m + "x | " + n + " Mbps | " + d + " KB";
+var n=v*m;d+=Math.floor(Math.random()*200)+100;
+document.getElementById("st").innerHTML="📡 CONECTADO: "+s;
+document.getElementById("vl").innerText=n;
+document.getElementById("pg").innerText="⬇️ "+n+" | ⬆️ "+n+" | Ping: "+(m>=20?"1ms":"5ms");
+document.getElementById("cg").innerText="🔋 "+(m>=20?"100%":"85%")+" | ☁️";
+document.getElementById("lg").innerText="[LOG] "+s+": "+m+"x | "+n+" Mbps | "+d+" KB";
 }
 
-function p(){document.getElementById("lg").innerText = "📊 " + v + " Mbps | " + d + " KB | ☁️ 24H";}
-function seg(){document.getElementById("lg").innerText = "🛡️ SHA-256 | Firewall ON";}
-function s(){document.getElementById("app").style.display = "none";document.getElementById("login").style.display = "block";}
+function p(){document.getElementById("lg").innerText="📊 "+v+" Mbps | "+d+" KB | ☁️ 24H";}
+function seg(){document.getElementById("lg").innerText="🛡️ SHA-256 | Firewall ON";}
+function s(){document.getElementById("app").style.display="none";document.getElementById("login").style.display="block";}
+
+// CADASTRAR INICIAIS
+db.collection("clientes").doc("kauan@megawifi.com").set({n:"Kauan",e:"kauan@megawifi.com",s:"kauan123",p:"PREMIUM",ativo:true});
+db.collection("clientes").doc("cliente1@megawifi.com").set({n:"Cliente 1",e:"cliente1@megawifi.com",s:"cliente123",p:"BASICO",ativo:true});
 </script>
 </body>
 </html>"""
